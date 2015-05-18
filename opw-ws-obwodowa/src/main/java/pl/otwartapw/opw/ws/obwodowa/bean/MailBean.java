@@ -43,8 +43,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.otwartapw.opw.ws.obwodowa.MailConfigDto;
-import pl.otwartapw.opw.ws.obwodowa.MailContentDto;
+import pl.otwartapw.opw.ws.obwodowa.dto.MailConfigDto;
+import pl.otwartapw.opw.ws.obwodowa.dto.MailContentDto;
 import pl.otwartapw.opw.ws.obwodowa.OpwWsConfigStatic;
 import pl.otwartapw.opw.ws.obwodowa.entity.OpwUser;
 

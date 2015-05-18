@@ -21,51 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package pl.otwartapw.opw.ws.obwodowa;
-
-import java.io.Serializable;
+package pl.otwartapw.opw.ws.obwodowa.dto;
 
 /**
- * DTO represents E-Mail configuration.
  *
  * @author Adam Kowalewski
  */
-public class MailConfigDto implements Serializable {
+public class MailContentDto {
 
-    private String fromLabel, fromAddress;
-    private String hostname;
+    private String login, password, link;
 
-    public MailConfigDto() {
+    public MailContentDto() {
     }
 
-    public MailConfigDto(String fromLabel, String fromAddress, String hostname) {
-        this.fromLabel = fromLabel;
-        this.fromAddress = fromAddress;
-        this.hostname = hostname;
+    public MailContentDto(String login, String password, String link) {
+        this.login = login;
+        this.password = password;
+        this.link = link;
     }
 
-    public String getFromLabel() {
-        return fromLabel;
+    public String getLogin() {
+        return login;
     }
 
-    public void setFromLabel(String fromLabel) {
-        this.fromLabel = fromLabel;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public String getFromAddress() {
-        return fromAddress;
+    public String getPassword() {
+        return password;
     }
 
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getHostname() {
-        return hostname;
+    public String getLink() {
+        return link;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setLink(String link) {
+        this.link = link;
     }
 
 }

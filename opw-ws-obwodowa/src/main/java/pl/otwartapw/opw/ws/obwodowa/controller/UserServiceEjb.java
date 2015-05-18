@@ -1,0 +1,276 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2015 Adam Kowalewski.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package pl.otwartapw.opw.ws.obwodowa.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ws.rs.core.GenericEntity;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static javax.ws.rs.core.Response.Status.*;
+import pl.otwartapw.opw.ws.obwodowa.OpwWsConfigStatic;
+import pl.otwartapw.opw.ws.obwodowa.SecurityHandler;
+import pl.otwartapw.opw.ws.obwodowa.bean.ConfigBean;
+import pl.otwartapw.opw.ws.obwodowa.bean.MailBean;
+import pl.otwartapw.opw.ws.obwodowa.bean.ObwodowaBean;
+import pl.otwartapw.opw.ws.obwodowa.bean.SessionBean;
+import pl.otwartapw.opw.ws.obwodowa.bean.UserBean;
+import pl.otwartapw.opw.ws.obwodowa.bean.WynikBean;
+import pl.otwartapw.opw.ws.obwodowa.dto.GResultDto;
+import pl.otwartapw.opw.ws.obwodowa.dto.KomisjaShortDto;
+import pl.otwartapw.opw.ws.obwodowa.dto.UserDto;
+import pl.otwartapw.opw.ws.obwodowa.dto.UserRegisterDto;
+import pl.otwartapw.opw.ws.obwodowa.entity.OpwObwodowaKomisja;
+import pl.otwartapw.opw.ws.obwodowa.entity.OpwSession;
+import pl.otwartapw.opw.ws.obwodowa.entity.OpwUser;
+
+/**
+ * @author Adam Kowalewski
+ */
+@Stateless
+public class UserServiceEjb implements Serializable {
+
+    private final static Logger logger = LoggerFactory.getLogger(UserServiceEjb.class);
+
+    @EJB
+    SecurityHandler securityHandler;
+    @EJB
+    UserBean userBean;
+    @EJB
+    WynikBean wynikBean;
+    @EJB
+    MailBean mailBean;
+    @EJB
+    ConfigBean configBean;
+    @EJB
+    SessionBean sessionBean;
+    @EJB
+    ObwodowaBean obwodowaBean;
+
+    public UserServiceEjb() {
+    }
+
+    public GResultDto addObwodowa(int userId, String pkwId, String login, String token) {
+
+        if (!securityHandler.checkUser(login, token)) {
+            return GResultDto.invalidResult(UNAUTHORIZED.getStatusCode());
+        }
+
+        OpwUser user = userBean.find(userId);
+        OpwObwodowaKomisja obwodowa = obwodowaBean.findObwodowa(pkwId);
+
+        if (user == null || obwodowa == null) {
+            return GResultDto.invalidResult(NOT_FOUND.getStatusCode());
+        }
+
+        if (!user.getOpwObwodowaKomisjaList().contains(obwodowa)) {
+            // TODO transaction & reconsider this combo
+            user.getOpwObwodowaKomisjaList().add(obwodowa);
+            obwodowa.getOpwUserList().add(user);
+
+            logger.trace("add Obwodowa {} to user {}", obwodowa.getPkwId(), user.getEmail());
+            userBean.edit(user);
+            obwodowaBean.edit(obwodowa);
+
+            return GResultDto.validResult(OK.getStatusCode());
+        }
+
+        return GResultDto.invalidResult(BAD_REQUEST.getStatusCode());
+    }
+
+    public GResultDto delObwodowa(int userId, String pkwId, String login, String token) {
+        if (!securityHandler.checkUser(login, token)) {
+            return GResultDto.invalidResult(UNAUTHORIZED.getStatusCode());
+        }
+
+        OpwUser user = userBean.find(userId);
+        OpwObwodowaKomisja obwodowa = obwodowaBean.findObwodowa(pkwId);
+
+        if (user == null || obwodowa == null) {
+            return GResultDto.invalidResult(NOT_FOUND.getStatusCode());
+        }
+
+        if (user.getOpwObwodowaKomisjaList().contains(obwodowa)) {
+            user.getOpwObwodowaKomisjaList().remove(obwodowa);
+            obwodowa.getOpwUserList().remove(user);
+
+            logger.trace("del Obwodowa {} from user {}", obwodowa.getPkwId(), user.getEmail());
+            userBean.edit(user);
+            obwodowaBean.edit(obwodowa);
+
+            return GResultDto.validResult(OK.getStatusCode());
+        }
+        return GResultDto.invalidResult(BAD_REQUEST.getStatusCode());
+    }
+
+    public GResultDto login(String login, String password) {
+
+        OpwUser user = userBean.verifyCredentials(login, password, OpwWsConfigStatic.APP_SALT);
+
+        // if auth failed 
+        if (user == null) {
+            logger.error("REST Login failed for {}.", login);
+            return GResultDto.invalidResult(UNAUTHORIZED.getStatusCode());
+        }
+        // auth ok
+        String restToken = userBean.encryptSHA(userBean.generatePassword());
+
+        Date timeout = fetchExpireDate();
+
+        OpwSession session = new OpwSession();
+        session.setToken(restToken);
+        session.setOpwUserId(user);
+        session.setDateValidTo(timeout);
+        session.setActive(true);
+        sessionBean.create(session);
+
+        UserDto userDto = new UserDto(
+                user.getId(),
+                user.getFirstname(),
+                user.getLastname(),
+                login,
+                restToken,
+                true,
+                String.valueOf(timeout.getTime())
+        );
+        return GResultDto.validResult(OK.getStatusCode(), userDto);
+    }
+
+    private Date fetchExpireDate() {
+        int timeoutInSeconds = Integer.valueOf(configBean.readConfigValue(OpwWsConfigStatic.CFG_KEY_REST_SESSION_TIMEOUT));
+        Calendar timeout = Calendar.getInstance();
+        timeout.add(Calendar.SECOND, timeoutInSeconds);
+        return timeout.getTime();
+    }
+
+    /**
+     * Logout REST user.
+     *
+     * @param login used for authentication.
+     * @param token used for authentication.
+     * @return <code>200</code> when logged out, otherwise <code>401</code>.
+     * @author Adam Kowalewski
+     * @version 2015.05.08
+     */
+    public GResultDto logout(String login, String token) {
+        if (!securityHandler.checkUser(login, token)) {
+            return GResultDto.invalidResult(UNAUTHORIZED.getStatusCode());
+        }
+        logger.trace("logout user {} token {}", login, token);
+        OpwUser user = userBean.findUser(login);
+        OpwSession session = sessionBean.find(user, token);
+        session.setActive(false);
+        sessionBean.edit(session);
+
+        return GResultDto.validResult(OK.getStatusCode());
+    }
+
+    public GResultDto<GenericEntity<List<KomisjaShortDto>>> loadObwodowaShortList(int userId, String login, String token) {
+
+        if (!securityHandler.checkUser(userId, login, token)) {
+            return GResultDto.invalidResult(UNAUTHORIZED.getStatusCode());
+        }
+
+        OpwUser user = userBean.findUser(userId);
+        logger.trace("userId {} user {} obwodowa {} wynik {} ", user.getId(), user.getEmail(), user.getOpwObwodowaKomisjaList().size(), user.getOpwWynikList().size());
+
+        List<KomisjaShortDto> resultList = new ArrayList<>();
+
+        for (OpwObwodowaKomisja obwodowa : user.getOpwObwodowaKomisjaList()) {
+            int countWynik = wynikBean.countWynik(obwodowa);
+            KomisjaShortDto komisja = new KomisjaShortDto(obwodowa.getId(), obwodowa.getPkwId(), obwodowa.getName(), obwodowa.getAddress(), countWynik);
+            logger.trace(komisja.toString());
+            resultList.add(komisja);
+        }
+
+        GenericEntity<List<KomisjaShortDto>> result = new GenericEntity<List<KomisjaShortDto>>(resultList) {
+        };
+
+        return GResultDto.validResult(OK.getStatusCode(), result);
+    }
+
+    /**
+     * MOCK
+     *
+     * @param apiClient
+     * @param apiToken
+     * @param newUser
+     * @return
+     * @TODO add email availbe check and proper result type
+     */
+    public GResultDto register(String apiClient, String apiToken, UserRegisterDto newUser) {
+        if (!securityHandler.checkClient(apiClient, apiToken)) {            
+            return GResultDto.validResult(UNAUTHORIZED.getStatusCode());
+        }
+
+        logger.info("register " + newUser.toString());
+
+        OpwUser user = new OpwUser();
+
+        user.setFirstname(newUser.getFirstname());
+        user.setLastname(newUser.getLastname());
+        user.setEmail(newUser.getEmail());
+        user.setPhone(newUser.getPhone());
+
+        String passwordPlain = userBean.generatePassword();
+        String userSalt = userBean.generatePassword(8);
+        user.setSalt(userSalt);
+        user.setToken(userBean.generateToken());
+        user.setActive(false);
+        user.setDateCreated(new Date());
+        user.setType("U"); // TODO move to ENUM
+        user.setOrigin(apiClient);
+
+        user.setPassword(userBean.saltPassword(OpwWsConfigStatic.APP_SALT, userSalt, passwordPlain));
+        try {
+            userBean.create(user);
+            mailBean.sendMailWelcome(user, passwordPlain, false);
+        } catch (Exception e) {
+            logger.error("err {} ", e.getMessage());
+            return GResultDto.invalidResult(BAD_REQUEST.getStatusCode());
+        }
+
+        return GResultDto.validResult(OK.getStatusCode());
+    }
+
+    public GResultDto checkEmail(String email) {
+        try {
+            boolean duplicates = userBean.isDuplicate(email);
+            if (!duplicates) {
+                return GResultDto.validResult(OK.getStatusCode());
+            }
+            return GResultDto.invalidResult(CONFLICT.getStatusCode());
+        } catch (Exception e) {
+            logger.error("Error while calling UserBean#isDuplicate: {} ", e.getMessage());
+            return GResultDto.invalidResult(INTERNAL_SERVER_ERROR.getStatusCode());
+        }
+    }
+}

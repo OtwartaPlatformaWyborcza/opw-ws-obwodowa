@@ -21,47 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package pl.otwartapw.opw.ws.obwodowa;
+package pl.otwartapw.opw.ws.obwodowa.dto;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Adam Kowalewski
  */
-public class MailContentDto {
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class OkregowaDto {
 
-    private String login, password, link;
+    private String pkwId, name, address;
 
-    public MailContentDto() {
+    public OkregowaDto() {
     }
 
-    public MailContentDto(String login, String password, String link) {
-        this.login = login;
-        this.password = password;
-        this.link = link;
+    public OkregowaDto(String pkwId, String name, String address) {
+        this.pkwId = pkwId;
+        this.name = name;
+        this.address = address;
     }
 
-    public String getLogin() {
-        return login;
+    public String getPkwId() {
+        return pkwId;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setPkwId(String pkwId) {
+        this.pkwId = pkwId;
     }
 
-    public String getPassword() {
-        return password;
+    public String getName() {
+        return name;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLink() {
-        return link;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 }
