@@ -34,7 +34,7 @@ public final class OpwWsConfigStatic {
     /**
      * Persistance unit name.
      */
-    public static final String PU_OPW = "opwPU";
+    public static final String PU_OPW = "opw-ws-obwodowaPU";
 
     /**
      * User ID for root access.
