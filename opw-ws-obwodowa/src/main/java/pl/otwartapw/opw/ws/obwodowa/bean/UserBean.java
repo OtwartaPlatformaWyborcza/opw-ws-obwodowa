@@ -110,13 +110,7 @@ public class UserBean extends AbstractOpwFacade<OpwUser> {
      * @version 2015.05.05
      */
     public boolean isDuplicate(String email) {
-        try {
-            return countUserBy(email) > 0;
-        } catch (Exception e) {
-            //TODO Error flow for thrown exceptions
-            logger.error("Error while checking if '{}' email is unique caused by", email, e.getMessage());
-        }
-        return true;
+        return findUser(email) != null;
     }
 
     /**
@@ -146,7 +140,7 @@ public class UserBean extends AbstractOpwFacade<OpwUser> {
      * @return number of found users
      */
     public Long countUserBy(String email) {
-        TypedQuery<Long> query = em.createNamedQuery("OpwUser.countByEmail", Long.class);
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(o) FROM OpwUser o WHERE o.email = :email", Long.class);
         query.setParameter("email", email);
 
         try {
