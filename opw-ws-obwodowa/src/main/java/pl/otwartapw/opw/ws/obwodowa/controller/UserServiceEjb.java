@@ -210,7 +210,7 @@ public class UserServiceEjb implements Serializable {
         for (OpwObwodowaKomisja obwodowa : user.getOpwObwodowaKomisjaList()) {
             int countWynik = wynikBean.countWynik(obwodowa);
             KomisjaShortDto komisja = new KomisjaShortDto(obwodowa.getId(), obwodowa.getPkwId(), obwodowa.getName(), obwodowa.getAddress(), countWynik);
-            logger.trace(komisja.toString());
+            logger.trace("komisja {}", komisja.toString());
             resultList.add(komisja);
         }
 
@@ -264,7 +264,13 @@ public class UserServiceEjb implements Serializable {
         return GResultDto.validResult(OK.getStatusCode());
     }
 
-    public GResultDto checkEmail(@NotNull @Size(max = 64) String email) {
+    public GResultDto checkEmail(String apiClient, String apiToken,
+            @NotNull @Size(max = 64) String email) {
+        
+        if (!securityHandler.checkClient(apiClient, apiToken)) {            
+            return GResultDto.validResult(UNAUTHORIZED.getStatusCode());
+        }
+        
         try {
             boolean duplicates = userBean.isDuplicate(email);
             if (!duplicates) {

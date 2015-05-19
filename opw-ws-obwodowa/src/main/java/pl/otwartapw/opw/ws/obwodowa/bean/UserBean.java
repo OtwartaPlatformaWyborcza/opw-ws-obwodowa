@@ -127,6 +127,8 @@ public class UserBean extends AbstractOpwFacade<OpwUser> {
 
         try {
             return (OpwUser) q.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
         } catch (PersistenceException e) {
             logger.error("Ex {} for email {}", e, login);
             return null;

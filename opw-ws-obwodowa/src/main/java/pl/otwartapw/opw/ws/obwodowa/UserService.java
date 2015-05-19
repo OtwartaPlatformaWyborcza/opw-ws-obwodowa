@@ -156,8 +156,12 @@ public class UserService extends AbstractService {
 
     @GET
     @Path("/available/{email}")
-    public Response checkEmail(@NotNull @PathParam("email") String email,
+    public Response checkEmail(
+            @NotNull @PathParam("email") String email,
+            @NotNull @HeaderParam(OPW_HEADER_API_CLIENT) String apiClient,
+            @NotNull @HeaderParam(OPW_HEADER_API_TOKEN) String apiToken,
             @HeaderParam(OPW_HEADER_DEBUG_ERROR500) String debug) {
+        
         if (debug != null) {
             logger.debug(LOG_DBG_500);
             return mockServerError();
@@ -165,7 +169,7 @@ public class UserService extends AbstractService {
 
         logger.trace("CheckEmail request for {} ", email);
 
-        return buildResponse(userServiceEjb.checkEmail(email));
+        return buildResponse(userServiceEjb.checkEmail(apiClient, apiToken, email));
     }
 
 }
