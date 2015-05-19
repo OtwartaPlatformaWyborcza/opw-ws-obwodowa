@@ -37,12 +37,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WynikDto {
 
-    private short uprawnionych, glosujacych, kartWaznych, glosowNieWaznych, glosowWaznych;
+    private Short uprawnionych;
+    private Short glosujacych;
+    private Short kartWaznych;
+    private Short glosowNieWaznych;
+    private Short glosowWaznych;
 
-    private Short k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11;
+    private Short k1;
+    private Short k2;
+    private Short k3;
+    private Short k4;
+    private Short k5;
+    private Short k6;
+    private Short k7;
+    private Short k8;
+    private Short k9;
+    private Short k10;
+    private Short k11;
 
     private String timestampCreated;
-    private int ratedPositiv, ratedNegativ;
+    private int ratedPositiv;
+    private int ratedNegativ;
 
     private List<LinkDto> linkList;
 
@@ -50,7 +65,7 @@ public class WynikDto {
         linkList = new ArrayList<>();
     }
 
-    public WynikDto(short uprawnionych, short glosujacych, short kartWaznych, short glosowNieWaznych, short glosowWaznych, Short k1, Short k2, Short k3, Short k4, Short k5, Short k6, Short k7, Short k8, Short k9, Short k10, Short k11) {
+    public WynikDto(Short uprawnionych, Short glosujacych, Short kartWaznych, Short glosowNieWaznych, Short glosowWaznych, Short k1, Short k2, Short k3, Short k4, Short k5, Short k6, Short k7, Short k8, Short k9, Short k10, Short k11) {
         this.uprawnionych = uprawnionych;
         this.glosujacych = glosujacych;
         this.kartWaznych = kartWaznych;
@@ -70,43 +85,43 @@ public class WynikDto {
         linkList = new ArrayList<>();
     }
 
-    public short getUprawnionych() {
+    public Short getUprawnionych() {
         return uprawnionych;
     }
 
-    public void setUprawnionych(short uprawnionych) {
+    public void setUprawnionych(Short uprawnionych) {
         this.uprawnionych = uprawnionych;
     }
 
-    public short getGlosujacych() {
+    public Short getGlosujacych() {
         return glosujacych;
     }
 
-    public void setGlosujacych(short glosujacych) {
+    public void setGlosujacych(Short glosujacych) {
         this.glosujacych = glosujacych;
     }
 
-    public short getKartWaznych() {
+    public Short getKartWaznych() {
         return kartWaznych;
     }
 
-    public void setKartWaznych(short kartWaznych) {
+    public void setKartWaznych(Short kartWaznych) {
         this.kartWaznych = kartWaznych;
     }
 
-    public short getGlosowNieWaznych() {
+    public Short getGlosowNieWaznych() {
         return glosowNieWaznych;
     }
 
-    public void setGlosowNieWaznych(short glosowNieWaznych) {
+    public void setGlosowNieWaznych(Short glosowNieWaznych) {
         this.glosowNieWaznych = glosowNieWaznych;
     }
 
-    public short getGlosowWaznych() {
+    public Short getGlosowWaznych() {
         return glosowWaznych;
     }
 
-    public void setGlosowWaznych(short glosowWaznych) {
+    public void setGlosowWaznych(Short glosowWaznych) {
         this.glosowWaznych = glosowWaznych;
     }
 

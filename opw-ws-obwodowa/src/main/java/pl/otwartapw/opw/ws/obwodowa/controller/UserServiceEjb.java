@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import static javax.ws.rs.core.Response.Status.*;
 import pl.otwartapw.opw.ws.obwodowa.OpwWsConfigStatic;
@@ -226,7 +229,7 @@ public class UserServiceEjb implements Serializable {
      * @return
      * @TODO add email availbe check and proper result type
      */
-    public GResultDto register(String apiClient, String apiToken, UserRegisterDto newUser) {
+    public GResultDto register(String apiClient, String apiToken, @Valid UserRegisterDto newUser) {
         if (!securityHandler.checkClient(apiClient, apiToken)) {            
             return GResultDto.validResult(UNAUTHORIZED.getStatusCode());
         }
@@ -246,7 +249,7 @@ public class UserServiceEjb implements Serializable {
         user.setToken(userBean.generateToken());
         user.setActive(false);
         user.setDateCreated(new Date());
-        user.setType("U"); // TODO move to ENUM
+        user.setType("RU"); // TODO move to ENUM
         user.setOrigin(apiClient);
 
         user.setPassword(userBean.saltPassword(OpwWsConfigStatic.APP_SALT, userSalt, passwordPlain));
@@ -261,7 +264,7 @@ public class UserServiceEjb implements Serializable {
         return GResultDto.validResult(OK.getStatusCode());
     }
 
-    public GResultDto checkEmail(String email) {
+    public GResultDto checkEmail(@NotNull @Size(max = 64) String email) {
         try {
             boolean duplicates = userBean.isDuplicate(email);
             if (!duplicates) {

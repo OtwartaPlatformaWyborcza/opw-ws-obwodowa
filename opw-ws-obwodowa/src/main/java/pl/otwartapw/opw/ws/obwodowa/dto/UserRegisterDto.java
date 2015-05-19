@@ -24,6 +24,7 @@
 package pl.otwartapw.opw.ws.obwodowa.dto;
 
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -38,10 +39,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserRegisterDto implements Serializable {
 
-    @Size(min = 2, max = 5)
+    @Size(max = 32)
     private String firstname;
+    @Size(max = 32)
     private String lastname;
+    @NotNull
+    @Size(max = 64)
     private String email;
+    @Size(max = 24)
     private String phone;
 
     public UserRegisterDto() {

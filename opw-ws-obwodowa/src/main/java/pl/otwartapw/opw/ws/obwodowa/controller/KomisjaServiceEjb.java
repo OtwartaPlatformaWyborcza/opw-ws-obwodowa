@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.validation.Valid;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
@@ -127,7 +128,7 @@ public class KomisjaServiceEjb implements Serializable {
         return GResultDto.validResult(OK.getStatusCode(), resultList);
     }
 
-    public GResultDto uploadWynik(String pkwId, String login, String token, WynikDto wynik) {
+    public GResultDto uploadWynik(String pkwId, String login, String token, @Valid WynikDto wynik) {
         if (!securityHandler.checkUser(login, token)) {
             logger.error("unauthorized access  {} - {}", login, token);
             return GResultDto.invalidResult(UNAUTHORIZED.getStatusCode());
