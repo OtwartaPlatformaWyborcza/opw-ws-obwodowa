@@ -105,7 +105,7 @@ public class UserServiceEjb implements Serializable {
 
             return GResultDto.validResult(OK.getStatusCode());
         }
-
+        // TODO refactor to 409 
         return GResultDto.invalidResult(OK.getStatusCode());
     }
 
