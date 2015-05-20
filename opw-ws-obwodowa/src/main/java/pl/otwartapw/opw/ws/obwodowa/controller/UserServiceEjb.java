@@ -106,7 +106,7 @@ public class UserServiceEjb implements Serializable {
             return GResultDto.validResult(OK.getStatusCode());
         }
 
-        return GResultDto.invalidResult(BAD_REQUEST.getStatusCode());
+        return GResultDto.invalidResult(OK.getStatusCode());
     }
 
     public GResultDto delObwodowa(int userId, String pkwId, String login, String token) {

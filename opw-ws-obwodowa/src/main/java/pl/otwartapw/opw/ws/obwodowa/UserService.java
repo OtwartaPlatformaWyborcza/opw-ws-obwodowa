@@ -78,7 +78,7 @@ public class UserService extends AbstractService {
             return mockServerError();
         }
 
-        logger.trace("add obodowa {} ", pkwId);
+        logger.trace("del obodowa {} ", pkwId);
         return buildResponse(userServiceEjb.delObwodowa(userId, pkwId, login, token));
     }
 
