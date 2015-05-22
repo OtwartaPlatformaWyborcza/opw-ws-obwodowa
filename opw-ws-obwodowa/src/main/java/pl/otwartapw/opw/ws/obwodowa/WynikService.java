@@ -93,7 +93,7 @@ public class WynikService extends AbstractService {
             @NotNull @HeaderParam(OPW_HEADER_LOGIN) String login,
             @NotNull @HeaderParam(OPW_HEADER_TOKEN) String token,
             @HeaderParam(OPW_HEADER_DEBUG_ERROR500) String debug,
-            LinkDto linkDto) {
+            @NotNull LinkDto linkDto) {
         if (debug != null) {
             return mockServerError();
         }
