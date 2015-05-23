@@ -49,6 +49,7 @@ public final class OpwWsConfigStatic {
     // const for config in database     
     public static final String CFG_KEY_CISZA_WYBORCZA = "CISZA_WYBORCZA";
     public static final String CFG_KEY_BASE_URL = "OPW_BASE_URL";
+    public static final String CFG_KEY_CLIENT_URL = "OPW_CLIENT_URL";
     public static final String CFG_KEY_EMAIL_OUTBOUND = "EMAIL_OUTBOUND";
     public static final String CFG_KEY_EMAIL_FROM = "EMAIL_OUTBOUND_FROM";
     public static final String CFG_KEY_EMAIL_FROM_LABEL = "EMAIL_OUTBOUND_FROM_LABEL";
