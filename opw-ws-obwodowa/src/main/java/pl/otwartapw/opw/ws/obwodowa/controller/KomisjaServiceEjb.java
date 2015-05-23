@@ -128,7 +128,7 @@ public class KomisjaServiceEjb implements Serializable {
         return GResultDto.validResult(OK.getStatusCode(), resultList);
     }
 
-    public GResultDto uploadWynik(String pkwId, String login, String token, @Valid WynikDto wynik) {
+    public GResultDto uploadWynik(String pkwId, String login, String token, WynikDto wynik) {
         if (!securityHandler.checkUser(login, token)) {
             logger.error("unauthorized access  {} - {}", login, token);
             return GResultDto.invalidResult(UNAUTHORIZED.getStatusCode());
