@@ -27,15 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.ws.rs.core.GenericEntity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.ejb.Stateless;
 
 import static javax.ws.rs.core.Response.Status.*;
 import pl.otwartapw.opw.ws.obwodowa.OpwWsConfigStatic;
@@ -263,8 +261,7 @@ public class UserServiceEjb implements Serializable {
         return GResultDto.validResult(OK.getStatusCode());
     }
 
-    public GResultDto checkEmail(String apiClient, String apiToken,
-            @NotNull @Size(max = 64) String email) {
+    public GResultDto checkEmail(String apiClient, String apiToken, String email) {
         
         if (!securityHandler.checkClient(apiClient, apiToken)) {            
             return GResultDto.validResult(UNAUTHORIZED.getStatusCode());

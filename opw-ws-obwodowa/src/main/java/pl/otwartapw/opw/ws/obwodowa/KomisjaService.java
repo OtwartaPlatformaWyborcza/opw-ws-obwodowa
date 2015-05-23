@@ -25,7 +25,6 @@ package pl.otwartapw.opw.ws.obwodowa;
 
 
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.validation.constraints.NotNull;
@@ -47,7 +46,6 @@ import pl.otwartapw.opw.ws.obwodowa.dto.WynikDto;
  * @author Adam Kowalewski
  */
 @Path("/komisja")
-@RequestScoped
 public class KomisjaService extends AbstractService {
 
     private final static Logger logger = LoggerFactory.getLogger(KomisjaService.class);

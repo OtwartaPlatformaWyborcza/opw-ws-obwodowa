@@ -23,10 +23,10 @@
  */
 package pl.otwartapw.opw.ws.obwodowa;
 
+import javax.ejb.EJB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
