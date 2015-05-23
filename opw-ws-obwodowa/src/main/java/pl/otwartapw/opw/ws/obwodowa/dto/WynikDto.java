@@ -25,6 +25,7 @@ package pl.otwartapw.opw.ws.obwodowa.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,13 +38,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WynikDto {
 
+    @NotNull
     private Short uprawnionych;
+    @NotNull
     private Short glosujacych;
+    @NotNull
     private Short kartWaznych;
+    @NotNull
     private Short glosowNieWaznych;
+    @NotNull
     private Short glosowWaznych;
 
+    @NotNull
     private Short k1;
+    @NotNull
     private Short k2;
     private Short k3;
     private Short k4;
