@@ -4,7 +4,7 @@
 3. [Jak do nas dołączyć?](https://github.com/OtwartaPlatformaWyborcza/Organizacja#jak-do-nas-do%C5%82%C4%85czy%C4%87) 
 
 
-# Otwarta Platforma Wyborcza - Serwis komisja obwodowa 
+# OPW - Serwis komisja obwodowa 
 REST API dla klienta Komisji Obwodowej 
 
 
